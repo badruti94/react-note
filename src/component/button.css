@@ -1,0 +1,14 @@
+.danger{
+    background-color: lightcoral;
+}
+
+.success{
+    background-color: lightblue;
+}
+
+.btn{
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 10px 10px 0;
+}
