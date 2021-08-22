@@ -1,0 +1,19 @@
+.alert-success,
+.alert-fail {
+    width: 20%;
+    position: absolute;
+    top: 10;
+    left: 50%;
+    padding: 3px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: lightblue;
+
+}
+
+.alert-fail {
+    background-color: lightcoral;
+}

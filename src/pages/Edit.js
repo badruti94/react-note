@@ -1,5 +1,7 @@
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import Alert from '../component/Alert'
 import Back from '../component/Back'
 import Button from '../component/Button'
 import Input from '../component/Input'
@@ -8,17 +10,15 @@ import Title from '../component/Title'
 
 const Edit = () => {
     const { id } = useParams()
-    const [note, setNote] = useState({ id: '', title: '', note: '' })
+    const [note, setNote] = useState({title: '', note: '' })
+    const [alert, setAlert] = useState(null)
     const history = useHistory()
 
     useEffect(() => {
-        const notes = JSON.parse(localStorage.getItem('notes'))
-
-        const noteById = notes.filter(note => {
-            return note.id === id;
-        })
-
-        setNote(noteById[0])
+        (async ()=> {
+            const notes = await axios.get(`http://localhost:3001/${id}`)
+            setNote(notes.data.data.note)
+        })()
 
     }, [])
 
@@ -29,27 +29,24 @@ const Edit = () => {
         setNote({ ...note, note: e.target.value })
     }
     const submitHandler = (e) => {
+        (async ()=>{
+            const data = await axios.put(`http://localhost:3001/${id}`, note)
+
+            setAlert(<Alert status={data.data.status} message={data.data.message}  />)
+                setTimeout(() => {
+                    setAlert(null)
+                }, 2000);
+        })()
+        
         e.preventDefault()
-
-        const notes = JSON.parse(localStorage.getItem('notes'))
-        const newNotes = notes.map(nt => {
-            if (nt.id === id) {
-                return note
-            }
-            return nt
-        })
-
-        localStorage.setItem('notes', JSON.stringify(newNotes))
-
-
     }
 
     const deleteHandler = (e) => {
-        e.preventDefault()
+        (async () => {
+            await axios.delete(`http://localhost:3001/${id}`)
+        })()
 
-        const notes = JSON.parse(localStorage.getItem('notes'))
-        const newNotes = notes.filter(nt => nt.id !== note.id)
-        localStorage.setItem('notes', JSON.stringify(newNotes))
+        e.preventDefault()
 
         history.push('/')
 
@@ -57,6 +54,7 @@ const Edit = () => {
 
     return (
         <Layout>
+            {alert}
             <Back />
             <Title text="Edit Data" />
             <form >

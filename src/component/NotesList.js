@@ -1,15 +1,22 @@
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import ItemList from "./ItemList";
 
 const NotesList = () => {
-    const data = JSON.parse(localStorage.getItem('notes'))
-    console.log(data);
+    const [notes, setNotes] = useState(null)
 
-    const content = data && data.map(dt => {
+    useEffect(() => {
+        (async () => {
+            const data = await axios.get('http://localhost:3001')
+            setNotes(data.data.data.notes)
+        })()
+    }, [])
+
+    const content = notes ? notes.map(dt => {
         return (
-            <ItemList key={dt.id} id={dt.id} title={dt.title} />
+            <ItemList key={dt._id} id={dt._id} title={dt.title} />
         )
-    })
+    }) : 'loading'
 
     return (
         <div>
